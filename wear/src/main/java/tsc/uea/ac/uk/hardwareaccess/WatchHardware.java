@@ -1,5 +1,6 @@
 package tsc.uea.ac.uk.hardwareaccess;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -26,6 +27,8 @@ public class WatchHardware {
     private final SensorManager wSensorManager;
     private final Sensor wAccelorometer;
     private final Sensor wGyroscope;
+    private float [] accelValues;
+    private float [] gyroValues;
 
     /**
      * Anonymous inner class implementation of EventListener interface.
@@ -33,11 +36,26 @@ public class WatchHardware {
      * the interface is required for all listeners. I'm unaware of any default listener behavior.
      * Wondering what to call right now though.
      * Obviously due to spec, all method calls in containing class must refer to final variables
+     *
+     *
+     * Note 2 - accel values include gravity by default, a low pass filter isolates gravity,
+     * whereas a high pass removes it. Removing gravity as a constant will provide linear acceleration.
+     * Look into physics of this.
+     *
      */
     private final SensorEventListener MotionListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-            //on changed
+            if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+                for(int i = 0; i < 3; i++){
+                    accelValues[i] = event.values[i];
+                }
+            }
+            if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE){
+                for(int i = 0; i < 3; i++){
+                    gyroValues[i] = event.values[i];
+                }
+            }
         }
 
         @Override
@@ -49,22 +67,28 @@ public class WatchHardware {
 
 
 
-
-
-
-
     /**
      * Constructor that initialises sensors using passed activity - seems best way to do it, will check
-     * @param activity system context to call hardare
+     * @param context system context to call hardare
      */
-    public WatchHardware(Activity activity){
+    public WatchHardware(Context context){
         //an activity represents a single screen - when passing between activities is hardware
         //kept the same?
-        wSensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
+        wSensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
         wAccelorometer = wSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         wGyroscope = wSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        accelValues = new float[3];
+        gyroValues = new float[3];
     }
 
+
+    public float [] getAccelValues(){
+        return accelValues;
+    }
+
+    public float [] getGyroValues(){
+        return gyroValues;
+    }
 
     /**
      * Registers listener object to track values
