@@ -1,9 +1,9 @@
 # MotionTracker
 
-##Overview
+## Overview  
 Android Wear application that tracks user motion and formats it directly into a WEKA compatible .arff file.
 
-##Requirements
+## Requirements  
 An android phone and android wear device, supporting API level 23(?) or higher.
 
 ##To Do
