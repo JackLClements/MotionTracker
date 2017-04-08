@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:keepScreenOn="true"
-        >
+        > <!-- Screen needs to be kept awake in order to stay in activity context -->
 
 
     <TextView
@@ -23,7 +23,7 @@
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Hello World!" /> <!-- Need to do something about this tbh -->
 
     <TextView
         android:id="@+id/textX"

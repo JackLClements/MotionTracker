@@ -7,10 +7,13 @@ import android.os.Handler;
 import android.support.wearable.view.WatchViewStub;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //debug
 import android.util.Log;
+import android.widget.Toast;
 
+import tsc.uea.ac.uk.hardwareaccess.WatchDataLayer;
 import tsc.uea.ac.uk.hardwareaccess.WatchHardware;
 
 public class watchfaceact extends Activity {
@@ -21,6 +24,7 @@ public class watchfaceact extends Activity {
     private TextView mZ;
     private WatchHardware mHardware;
     private Handler handler;
+    private WatchDataLayer dataLayer;
 
     private Runnable updateValuesThread = new Runnable(){
         @Override
@@ -31,6 +35,7 @@ public class watchfaceact extends Activity {
             mX.setText("X - " + values[0]);
             mY.setText("Y - " + values[1]);
             mZ.setText("Z - " + values[2]);
+            dataLayer.send(values);
             handler.postDelayed(this, 500); //calling this inside run essentially ensures run() will run again
                                             //there has to be a better way of looping this, surely?
         }
@@ -52,10 +57,8 @@ public class watchfaceact extends Activity {
         super.onCreate(savedInstanceState);
         mHardware = new WatchHardware(getApplicationContext()); //pass activity
         handler = new Handler(); //ensures safety, but not entirely happy with how this runs
+        dataLayer = new WatchDataLayer(getApplicationContext());
         setContentView(R.layout.activity_watchfaceact2);
-
-        //Keep screen on
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             //boxinsetlayout creation
