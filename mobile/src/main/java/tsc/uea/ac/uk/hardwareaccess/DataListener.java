@@ -1,6 +1,7 @@
 package tsc.uea.ac.uk.hardwareaccess;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.google.android.gms.wearable.CapabilityInfo;
 import com.google.android.gms.wearable.DataEvent;
@@ -10,12 +11,17 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
+import tsc.uea.ac.uk.shared.DataLayer;
+
 /**
  * Created by Jack L. Clements on 08/04/2017.
  */
 
 public class DataListener extends WearableListenerService {
-    private float [] accelorometer;
+
+    private DataLayer dataLayer;
+
+    private static float [] accelorometer;
 
     private static final String FILEPATH = "/watchValues";
 
@@ -24,9 +30,16 @@ public class DataListener extends WearableListenerService {
     }
 
     public DataListener(Context context){
-        //may not need it actually
+        dataLayer = new DataLayer(context); //connects to data layer
+        accelorometer = new float[3];
     }
 
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        dataLayer = new DataLayer(this);
+    }
 
     /**
      * Whenever a data item object is created, deleted, or changed, the system triggers this callback on all connected nodes.
@@ -65,7 +78,7 @@ public class DataListener extends WearableListenerService {
 
     }
 
-    public float [] getAccelData(){
+    public static float [] getAccelData(){
         return accelorometer;
     }
 

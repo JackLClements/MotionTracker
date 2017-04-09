@@ -12,9 +12,8 @@ import android.widget.Toast;
 //debug
 import android.util.Log;
 import android.widget.Toast;
-
-import tsc.uea.ac.uk.hardwareaccess.WatchDataLayer;
 import tsc.uea.ac.uk.hardwareaccess.WatchHardware;
+import tsc.uea.ac.uk.shared.DataLayer;
 
 public class watchfaceact extends Activity {
 
@@ -24,7 +23,7 @@ public class watchfaceact extends Activity {
     private TextView mZ;
     private WatchHardware mHardware;
     private Handler handler;
-    private WatchDataLayer dataLayer;
+    private DataLayer dataLayer;
 
     private Runnable updateValuesThread = new Runnable(){
         @Override
@@ -57,7 +56,7 @@ public class watchfaceact extends Activity {
         super.onCreate(savedInstanceState);
         mHardware = new WatchHardware(getApplicationContext()); //pass activity
         handler = new Handler(); //ensures safety, but not entirely happy with how this runs
-        dataLayer = new WatchDataLayer(getApplicationContext());
+        dataLayer = new DataLayer(getApplicationContext());
         setContentView(R.layout.activity_watchfaceact2);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -84,6 +83,7 @@ public class watchfaceact extends Activity {
     public void onPause(){
         super.onPause();
         mHardware.unregisterListener();
+        handler.removeCallbacks(updateValuesThread);
     }
 
     @Override

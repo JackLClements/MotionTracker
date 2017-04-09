@@ -1,0 +1,48 @@
+package tsc.uea.ac.uk.hardwareaccess;
+
+import com.google.android.gms.wearable.CapabilityApi;
+import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
+
+import tsc.uea.ac.uk.shared.DataLayer;
+
+/**
+ * Created by Jack L. Clements on 09/04/2017.
+ * Alt. implementation for potential deprication, other listener does not need to run 24/7
+ */
+
+public class DataListenerPoint2 implements DataApi.DataListener, MessageApi.MessageListener, CapabilityApi.CapabilityListener{
+    DataLayer layer;
+    float [] accelorometer;
+    final static String FILEPATH = "/watchValues";
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents){
+        DataMap map;
+        for(DataEvent event : dataEvents){
+            if(event.getType() == DataEvent.TYPE_CHANGED){
+                if(event.getDataItem().getUri().getPath().equals(FILEPATH)){
+                    map = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                    accelorometer = map.getFloatArray("GET_TO_THIS");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent){
+
+    }
+
+    @Override
+    public void onCapabilityChanged(CapabilityInfo capabilityInfo){
+
+    }
+
+}

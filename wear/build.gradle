@@ -23,4 +23,5 @@ dependencies {
     compile 'com.google.android.support:wearable:2.0.0'
     compile 'com.google.android.gms:play-services:10.2.1'
     compile 'com.google.android.gms:play-services-wearable:10.2.0'
+    compile project(':shared')
 }

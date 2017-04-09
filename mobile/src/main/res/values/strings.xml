@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">WearableMotionTracker</string>
+    <string name="app_name" translatable="false">UEA Motion Tracker</string>
+    <string name="introduction">Hello, and welcome to the UEA Motion Tracker. Let\'s get you set up.</string>
 </resources>

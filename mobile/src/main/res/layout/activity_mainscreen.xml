@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,51 +7,52 @@
     tools:context="tsc.uea.ac.uk.wearablemotiontracker.mainscreen"
     android:keepScreenOn="true">
     <!-- Screen needs to be kept awake in order to stay in activity context -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        >
 
     <TextView
         android:id="@+id/text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Hello World!"
-        tools:layout_editor_absoluteY="218dp"
-        tools:layout_editor_absoluteX="122dp" />
+     />
 
     <TextView
         android:id="@+id/textX"
-        android:layout_width="78dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@+id/text"
         app:layout_constraintLeft_toLeftOf="@+id/text"
-        android:text="X - "
-        android:layout_marginLeft="-8dp"
-        android:layout_marginTop="-13dp" />
+        android:text="X - " />
 
     <TextView
         android:id="@+id/textY"
-        android:layout_width="77dp"
-        android:layout_height="17dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@+id/textX"
         app:layout_constraintLeft_toLeftOf="@+id/textX"
-        android:textAlignment="center"
-        android:text="Y - "
-        android:layout_marginTop="0dp"
-        tools:layout_editor_absoluteY="252dp"
-        android:layout_marginLeft="0dp" />
+        android:text="Y - " />
 
     <TextView
         android:id="@+id/textZ"
-        android:layout_width="77dp"
-        android:layout_height="17dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@+id/textY"
         app:layout_constraintLeft_toLeftOf="@+id/textY"
-        android:text="Z - "
-        tools:layout_editor_absoluteY="270dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="1dp" />
-</android.support.constraint.ConstraintLayout>
+        android:text="Z - " />
+
+    </LinearLayout>
+</RelativeLayout>

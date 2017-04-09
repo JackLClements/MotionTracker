@@ -1,4 +1,4 @@
-package com.example.shared;
+package tsc.uea.ac.uk.shared;
 
 import org.junit.Test;
 
