@@ -39,6 +39,7 @@ public class DataListener extends WearableListenerService {
     public void onCreate(){
         super.onCreate();
         dataLayer = new DataLayer(this);
+        accelorometer = new float[3];
     }
 
     /**
@@ -56,7 +57,6 @@ public class DataListener extends WearableListenerService {
                 }
             }
         }
-
     }
 
     /**
