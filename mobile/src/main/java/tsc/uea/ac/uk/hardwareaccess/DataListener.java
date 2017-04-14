@@ -21,17 +21,16 @@ public class DataListener extends WearableListenerService {
 
     private DataLayer dataLayer;
 
-    private static float [] accelorometer;
+    private static float [] accelorometer = new float[3];
 
     private static final String FILEPATH = "/watchValues";
 
+
     public DataListener(){
-        accelorometer = new float[3];
     }
 
     public DataListener(Context context){
         dataLayer = new DataLayer(context); //connects to data layer
-        accelorometer = new float[3];
     }
 
 
@@ -39,7 +38,7 @@ public class DataListener extends WearableListenerService {
     public void onCreate(){
         super.onCreate();
         dataLayer = new DataLayer(this);
-        accelorometer = new float[3];
+
     }
 
     /**
@@ -78,8 +77,9 @@ public class DataListener extends WearableListenerService {
 
     }
 
+
     public static float [] getAccelData(){
+
         return accelorometer;
     }
-
 }
