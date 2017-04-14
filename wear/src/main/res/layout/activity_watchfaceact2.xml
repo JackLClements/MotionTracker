@@ -17,7 +17,17 @@
         > <!-- Screen needs to be kept awake in order to stay in activity context -->
 
 
-    <TextView
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/gobutton"
+            android:background="@android:color/transparent"
+            />
+
+
+        <TextView
         android:padding="5dp"
         android:id="@+id/text"
         android:gravity="center"

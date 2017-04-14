@@ -22,9 +22,8 @@ public class DataListener extends WearableListenerService {
     private DataLayer dataLayer;
 
     private static float [] accelorometer = new float[3];
-
+    private static float [] gyroscope = new float[3];
     private static final String FILEPATH = "/watchValues";
-
 
     public DataListener(){
     }
@@ -38,7 +37,6 @@ public class DataListener extends WearableListenerService {
     public void onCreate(){
         super.onCreate();
         dataLayer = new DataLayer(this);
-
     }
 
     /**
@@ -52,7 +50,8 @@ public class DataListener extends WearableListenerService {
             if(event.getType() == DataEvent.TYPE_CHANGED){
                 if(event.getDataItem().getUri().getPath().equals(FILEPATH)){
                     map = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
-                    accelorometer = map.getFloatArray("GET_TO_THIS");
+                    accelorometer = map.getFloatArray("ACCEL");
+                    gyroscope = map.getFloatArray("GYRO");
                 }
             }
         }
@@ -79,7 +78,10 @@ public class DataListener extends WearableListenerService {
 
 
     public static float [] getAccelData(){
-
         return accelorometer;
+    }
+
+    public static float [] getGyroData(){
+        return gyroscope;
     }
 }

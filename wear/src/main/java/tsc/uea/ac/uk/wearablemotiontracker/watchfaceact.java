@@ -30,11 +30,12 @@ public class watchfaceact extends Activity {
         public void run(){
             //get thing
             //set text
-            float [] values = mHardware.getAccelValues();
-            mX.setText("X - " + values[0]);
-            mY.setText("Y - " + values[1]);
-            mZ.setText("Z - " + values[2]);
-            dataLayer.send(values);
+            float [] aValues = mHardware.getAccelValues();
+            float [] gValues = mHardware.getGyroValues();
+            mX.setText("X - " + aValues[0]);
+            mY.setText("Y - " + aValues[1]);
+            mZ.setText("Z - " + aValues[2]);
+            dataLayer.send(aValues, gValues);
             handler.postDelayed(this, 500); //calling this inside run essentially ensures run() will run again
                                             //there has to be a better way of looping this, surely?
         }

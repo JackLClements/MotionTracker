@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Hello World!"
+        android:text="Accel"
      />
 
     <TextView
@@ -53,6 +53,44 @@
         app:layout_constraintTop_toBottomOf="@+id/textY"
         app:layout_constraintLeft_toLeftOf="@+id/textY"
         android:text="Z - " />
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Gyro"
+            />
+
+        <TextView
+            android:id="@+id/gyroX"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@+id/text"
+            app:layout_constraintLeft_toLeftOf="@+id/text"
+            android:text="X - " />
+
+        <TextView
+            android:id="@+id/gyroY"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@+id/textX"
+            app:layout_constraintLeft_toLeftOf="@+id/textX"
+            android:text="Y - " />
+
+        <TextView
+            android:id="@+id/gyroZ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@+id/textY"
+            app:layout_constraintLeft_toLeftOf="@+id/textY"
+            android:text="Z - " />
 
     </LinearLayout>
 </RelativeLayout>

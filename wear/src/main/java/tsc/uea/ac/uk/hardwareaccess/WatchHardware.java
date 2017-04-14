@@ -42,19 +42,34 @@ public class WatchHardware {
      * whereas a high pass removes it. Removing gravity as a constant will provide linear acceleration.
      * Look into physics of this.
      *
+     *
+     * Note 3 - REMEMBER, accelorometer indicates acceleration, NOT a global reference point for where the
+     * device is at all times. This could theoretically be calculated, but its use has yet to be determined.
+     *
+     * Note 4 - Currently in a toss-up in regards to the type of sensor data used re linear or w/ gravity,
+     * gyroscope or rotation vector. NB - do not use orientation due to risk of gimbal lock (write in paper)
+     *
+     * Note 5 - linear accel is commonly for gesture recog, might be worth putting toggle in settings
+     *
+     * Note 6 - gyroscope is rate of acceleration around an axis, accel is rate of acceleration ON an axis
+     * rotation is a constant set of position vectors
+     *
      */
     private final SensorEventListener MotionListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-            if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            //if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){ //just a test...
+            if(event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION){
                 for(int i = 0; i < 3; i++){
                     accelValues[i] = event.values[i];
                 }
+                accelValues = lowPass(event.values.clone(), accelValues);
             }
             if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE){
                 for(int i = 0; i < 3; i++){
                     gyroValues[i] = event.values[i];
                 }
+                gyroValues = lowPass(event.values.clone(), gyroValues); //needs to be done elsewhere, temp measure
             }
         }
 
@@ -75,7 +90,8 @@ public class WatchHardware {
         //an activity represents a single screen - when passing between activities is hardware
         //kept the same?
         wSensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
-        wAccelorometer = wSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        //wAccelorometer = wSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        wAccelorometer = wSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         wGyroscope = wSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         accelValues = new float[3];
         gyroValues = new float[3];
@@ -106,7 +122,7 @@ public class WatchHardware {
 
     public float[] lowPass(float [] input, float [] output){
         for(int i = 0; i < input.length; i++){
-            output[i] = output[i] + 0.5f * (input[i] - output[i]); //0.5 represents an alpha value, this needs calculating properly in future
+            output[i] = output[i] + 0.25f * (input[i] - output[i]); //0.5 represents an alpha value, this needs calculating properly in future
         }
         return output;
     }

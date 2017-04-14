@@ -43,14 +43,16 @@ public class DataLayer implements Runnable {
     }
 
 
-    public void send(float [] payload){
-        final float [] payloadCopy = payload;
+    public void send(float [] accel, float[] gyro){
+        final float [] payloadCopy = accel;
+        final float [] payLoadCopy2 = gyro;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if(client.isConnected()){
                     PutDataMapRequest mapRequest = PutDataMapRequest.create("/watchValues");
-                    mapRequest.getDataMap().putFloatArray("GET_TO_THIS", payloadCopy);
+                    mapRequest.getDataMap().putFloatArray("ACCEL", payloadCopy);
+                    mapRequest.getDataMap().putFloatArray("GYRO", payLoadCopy2);
                     PutDataRequest dataRequest = mapRequest.asPutDataRequest();
                     dataRequest.setUrgent();
                     PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(client, dataRequest); //not quite?
