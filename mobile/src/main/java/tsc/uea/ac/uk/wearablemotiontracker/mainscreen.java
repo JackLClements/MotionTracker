@@ -1,17 +1,25 @@
 package tsc.uea.ac.uk.wearablemotiontracker;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import tsc.uea.ac.uk.hardwareaccess.DataListener;
+import tsc.uea.ac.uk.shared.SettingsBundle;
 
 public class mainscreen extends AppCompatActivity {
 
     //private DataListener listener;
     private TextView mTextView, mX, mY, mZ, gX, gY, gZ;
     private Handler handler;
+    private ImageButton settingsButton;
 
     //
     ARFFConverter converter;
@@ -28,9 +36,23 @@ public class mainscreen extends AppCompatActivity {
         gX = (TextView) findViewById(R.id.gyroX);
         gY = (TextView) findViewById(R.id.gyroY);
         gZ = (TextView) findViewById(R.id.gyroZ);
-        //converter = new ARFFConverter();
+        settingsButton = (ImageButton) findViewById(R.id.settings);
+        converter = new ARFFConverter(getApplicationContext());
+        converter.write("Test phrase");
+        converter.close();
+        //converter.close();
+        //data to send over the wire - needs to be attached to a listener really
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //SettingsBundle bundle = new SettingsBundle(prefs.getBoolean("accelOrGrav", false), prefs.getBoolean("gyroOrRotation", false));
         handler.postDelayed(updateValuesThread, 500);
     }
+
+    public void settingsMenu(View view){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+
 
     private Runnable updateValuesThread = new Runnable(){
         @Override

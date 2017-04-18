@@ -12,6 +12,7 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import tsc.uea.ac.uk.shared.DataLayer;
+import tsc.uea.ac.uk.wearablemotiontracker.mainscreen;
 
 /**
  * Created by Jack L. Clements on 08/04/2017.
@@ -21,9 +22,13 @@ public class DataListener extends WearableListenerService {
 
     private DataLayer dataLayer;
 
+    private static mainscreen activity;
     private static float [] accelorometer = new float[3];
     private static float [] gyroscope = new float[3];
+    private static boolean running = false; //would rather have a notification rather than whatever else
     private static final String FILEPATH = "/watchValues";
+    private static final String BEGIN = "/begin";
+
 
     public DataListener(){
     }
@@ -53,12 +58,17 @@ public class DataListener extends WearableListenerService {
                     accelorometer = map.getFloatArray("ACCEL");
                     gyroscope = map.getFloatArray("GYRO");
                 }
+                if(event.getDataItem().getUri().getPath().equals(BEGIN)){
+                    map = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                    running = map.getBoolean("START");
+                }
             }
         }
     }
 
     /**
      * A message sent from a node triggers this callback on the target node.
+     * Remote Procedure Call, one way communication.
      * @param messageEvent
      */
     @Override
@@ -83,5 +93,9 @@ public class DataListener extends WearableListenerService {
 
     public static float [] getGyroData(){
         return gyroscope;
+    }
+
+    public static void setActivity(mainscreen screen){
+        activity = screen;
     }
 }

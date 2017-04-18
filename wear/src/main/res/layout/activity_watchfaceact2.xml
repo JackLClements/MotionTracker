@@ -3,8 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="15dp"
-    >
+    tools:context="tsc.uea.ac.uk.wearablemotiontracker.watchfaceact"
+    android:keepScreenOn="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,18 +15,19 @@
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:keepScreenOn="true"
         > <!-- Screen needs to be kept awake in order to stay in activity context -->
 
 
         <ImageButton
+            android:id="@+id/startButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/gobutton"
             android:background="@android:color/transparent"
-            />
+            android:onClick="startCapture"
+            android:scaleType="centerInside"
+            android:src="@drawable/gobutton" />
+
 
 
         <TextView

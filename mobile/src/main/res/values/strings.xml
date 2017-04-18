@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name" translatable="false">UEA Motion Tracker</string>
+    <string name="lang">Language</string>
     <string name="introduction">Hello, and welcome to the UEA Motion Tracker. Let\'s get you set up.</string>
+    <string name="settings">Settings</string>
+    <string name="gravSetting">Use gravity-inclusive accelorometer</string>
+    <string name="gravExplanation">Includes the force of gravity when calculating watch acceleration. Default (off) provides linear acceleration.</string>
+    <string name="gyroSetting">Use rotation vector</string>
+    <string name="gyroExplanation">Use the rotation vector of the device. Default (off) provides gyroscopic acceleration.</string>
+    <string name="eng">English</string>
+    <string name="jp">Japanese</string>
 </resources>

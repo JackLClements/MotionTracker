@@ -4,8 +4,13 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.wearable.view.WatchViewStub;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +29,7 @@ public class watchfaceact extends Activity {
     private WatchHardware mHardware;
     private Handler handler;
     private DataLayer dataLayer;
+    private ImageButton imageButton;
 
     private Runnable updateValuesThread = new Runnable(){
         @Override
@@ -66,6 +72,7 @@ public class watchfaceact extends Activity {
             mX = (TextView) findViewById(R.id.textX);
             mY = (TextView) findViewById(R.id.textY);
             mZ = (TextView) findViewById(R.id.textZ);
+            imageButton = (ImageButton) findViewById(R.id.startButton);
         }
         else{ //deprecated for older watches
             System.out.println("Old.");
@@ -78,6 +85,11 @@ public class watchfaceact extends Activity {
             });
         }
         handler.post(updateValuesThread);
+    }
+
+    public void startCapture(View view){
+        Vibrator vibe = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vibe.vibrate(1000);
     }
 
     @Override
