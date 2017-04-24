@@ -9,4 +9,11 @@
     <string name="gyroExplanation">Use the rotation vector of the device. Default (off) provides gyroscopic acceleration.</string>
     <string name="eng">English</string>
     <string name="jp">Japanese</string>
+    <string name="running">Running</string>
+    <string name="walking">Walking</string>
+    <string name="basketball">Basketball</string>
+    <string name="tennis">Tennis</string>
+    <string name="badminton">Badminton</string>
+    <string name="squash">Squash</string>
+    <string name="tabletennis">Table Tennis</string>
 </resources>

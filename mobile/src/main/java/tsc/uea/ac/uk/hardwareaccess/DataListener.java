@@ -1,6 +1,7 @@
 package tsc.uea.ac.uk.hardwareaccess;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.wearable.CapabilityInfo;
@@ -73,7 +74,15 @@ public class DataListener extends WearableListenerService {
      */
     @Override
     public void onMessageReceived(MessageEvent messageEvent){
-
+        try{
+            String text = new String(messageEvent.getData(), "UTF-8");
+            Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+            toast.show();
+            activity.beginCapture();
+        }
+        catch (Exception e){
+            Log.d("ERROR", e.toString());
+        }
     }
 
     /**

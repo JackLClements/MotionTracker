@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,8 @@ import android.util.Log;
 import android.widget.Toast;
 import tsc.uea.ac.uk.hardwareaccess.WatchHardware;
 import tsc.uea.ac.uk.shared.DataLayer;
+
+import static java.lang.Thread.sleep;
 
 public class watchfaceact extends Activity {
 
@@ -88,8 +91,25 @@ public class watchfaceact extends Activity {
     }
 
     public void startCapture(View view){
-        Vibrator vibe = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        vibe.vibrate(1000);
+        Runnable startCapture = new Runnable() {
+            @Override
+            public void run() {
+                Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                try{
+                    vibrator.vibrate(250);
+                    sleep(500);
+                    vibrator.vibrate(250);
+                    sleep(500);
+                    vibrator.vibrate(500);
+                }
+                catch (Exception e){
+                    Log.e("ERROR - ", e.toString());
+                }
+                dataLayer.sendBegin();
+            }
+        };
+        handler.post(startCapture);
+
     }
 
     @Override

@@ -9,4 +9,14 @@
         <item>ENG</item>
         <item>JP</item>
     </string-array>
+
+    <string-array name="activities">
+        <item>@string/running</item>
+        <item>@string/walking</item>
+        <item>@string/basketball</item>
+        <item>@string/tennis</item>
+        <item>@string/badminton</item>
+        <item>@string/squash</item>
+        <item>@string/tabletennis</item>
+    </string-array>
 </resources>

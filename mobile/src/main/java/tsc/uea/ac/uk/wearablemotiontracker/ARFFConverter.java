@@ -18,9 +18,9 @@ import static android.os.Environment.DIRECTORY_DOCUMENTS;
  */
 
 public class ARFFConverter {
-    File saveDir;
+    private File saveDir;
     private PrintWriter writer;
-    private File file;
+    private File file, fileX, fileY, fileZ;
     private String id;
 
     //test
@@ -32,6 +32,10 @@ public class ARFFConverter {
             //id = "Test1";
             saveDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Test Directory");
             file = new File(saveDir, "TestFile.txt");
+            /*
+            fileX = new File(saveDir, "TestX.txt");
+            fileY = new File(saveDir, "TestY.txt");
+            fileZ = new File(saveDir, "TestZ.txt");*/
             if(!saveDir.mkdirs()){
                 Log.e("Error", "Dir. not created");
             }
