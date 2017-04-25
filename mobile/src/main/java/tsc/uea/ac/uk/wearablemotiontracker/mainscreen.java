@@ -2,6 +2,7 @@ package tsc.uea.ac.uk.wearablemotiontracker;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import tsc.uea.ac.uk.hardwareaccess.DataListener;
 
@@ -25,6 +27,10 @@ public class mainscreen extends AppCompatActivity {
     //
     ARFFConverter converter;
     private boolean running;
+    private static final long DURATION = 10000;
+    private static final long INCREMENT = 100;
+    private float [] accel;
+    private float [] gyro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +51,10 @@ public class mainscreen extends AppCompatActivity {
         settingsButton = (ImageButton) findViewById(R.id.settings);
         converter = new ARFFConverter(getApplicationContext());
         converter.write("Test phrase");
+        accel = new float[3];
+        gyro = new float[3];
         running = false;
-        handler.postDelayed(updateValuesThread, 500);
+        //handler.post(updateValuesThread);
         //data to send over the wire - needs to be attached to a listener really
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //SettingsBundle bundle = new SettingsBundle(prefs.getBoolean("accelOrGrav", false), prefs.getBoolean("gyroOrRotation", false));
@@ -93,30 +101,47 @@ public class mainscreen extends AppCompatActivity {
     };
 
     public void beginCapture(){
-        running = true;
-        handler.postDelayed(updateValuesThread, 500);
+       recordValues.start();
     }
 
 
+    /**
+     * NOTE - Thread is currently unused, thanks to a memory leak.
+     * As noted below, running a UI-thread
+     */
     private Runnable updateValuesThread = new Runnable(){
         @Override
         public void run(){
-            //get thing
-            //set text
-            float [] values = DataListener.getAccelData();
-            float [] values2 = DataListener.getGyroData();
-            mX.setText("X - " + values[0]);
-            mY.setText("Y - " + values[1]);
-            mZ.setText("Z - " + values[2]);
-            gX.setText("X - " + values2[0]);
-            gY.setText("Y - " + values2[1]);
-            gZ.setText("Z - " + values2[2]);
-            converter.write("" + values[0]);
-            converter.write("" + values[1]);
-            converter.write("" + values[2]);
+                mX.setText("X - " + accel[0]);
+                mY.setText("Y - " + accel[1]);
+                mZ.setText("Z - " + accel[2]);
+                gX.setText("X - " + gyro[0]);
+                gY.setText("Y - " + gyro[1]);
+                gZ.setText("Z - " + gyro[2]);
+            //handler.post(this); //Note - any and all Android thread-based loops that don't utilise recursive handler calls need to call android looper
+            //side note 2 - ideally we want to either use a handler looper or async task to do constant UI updates, but I'm pressed for time
+        }
+    };
+
+    private CountDownTimer recordValues = new CountDownTimer(DURATION, INCREMENT){
+        public void onTick(long millisUntilFinished) {
+            accel = DataListener.getAccelData();
+            gyro = DataListener.getGyroData();
+            mX.setText("X - " + accel[0]);
+            mY.setText("Y - " + accel[1]);
+            mZ.setText("Z - " + accel[2]);
+            gX.setText("X - " + gyro[0]);
+            gY.setText("Y - " + gyro[1]);
+            gZ.setText("Z - " + gyro[2]);
+            converter.write("" + accel[0] + "/n");
+            converter.write("" + accel[1] + "/n");
+            converter.write("" + accel[2] + "/n");
+        }
+
+        public void onFinish() {
+            Toast toast = Toast.makeText(getApplicationContext(), "Countdown Finished!", Toast.LENGTH_SHORT);
+            toast.show();
             converter.close();
-            handler.postDelayed(this, 500); //calling this inside run essentially ensures run() will run again
-            //there has to be a better way of looping this, surely?
         }
     };
 

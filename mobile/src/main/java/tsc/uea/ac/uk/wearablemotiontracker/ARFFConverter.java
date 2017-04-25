@@ -42,8 +42,8 @@ public class ARFFConverter {
             try {
                 outputStream = new FileOutputStream(file);
                 writer = new PrintWriter(outputStream);
-                writer.write("@relation testfile1");
-                writer.write("@attribute id string");
+                writer.write("@relation testfile1 \n");
+                writer.write("@attribute id string \n");
                 id = "File Written";
                 Toast toast = Toast.makeText(context, id, Toast.LENGTH_SHORT);
                 toast.show();

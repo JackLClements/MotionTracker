@@ -45,7 +45,7 @@ public class watchfaceact extends Activity {
             mY.setText("Y - " + aValues[1]);
             mZ.setText("Z - " + aValues[2]);
             dataLayer.send(aValues, gValues);
-            handler.postDelayed(this, 500); //calling this inside run essentially ensures run() will run again
+            handler.post(this); //calling this inside run essentially ensures run() will run again
                                             //there has to be a better way of looping this, surely?
         }
     };
