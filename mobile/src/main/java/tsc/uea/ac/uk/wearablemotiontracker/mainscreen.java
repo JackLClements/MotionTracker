@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ public class mainscreen extends AppCompatActivity {
     private TextView mTextView, mX, mY, mZ, gX, gY, gZ;
     private Handler handler;
     private ImageButton settingsButton;
+    private EditText editText;
     private Spinner spinner;
     //
     ARFFConverter converter;
@@ -46,11 +48,12 @@ public class mainscreen extends AppCompatActivity {
         gY = (TextView) findViewById(R.id.gyroY);
         gZ = (TextView) findViewById(R.id.gyroZ);
         spinner = (Spinner) findViewById(R.id.activitySpinner);
+        editText = (EditText) findViewById(R.id.userID);
         populateSpinner(spinner);
         spinner.setOnItemSelectedListener(activitySpinnerListener);
         settingsButton = (ImageButton) findViewById(R.id.settings);
         converter = new ARFFConverter(getApplicationContext());
-        converter.write("Test phrase");
+        //converter.write("Test phrase");
         accel = new float[3];
         gyro = new float[3];
         running = false;
@@ -101,7 +104,9 @@ public class mainscreen extends AppCompatActivity {
     };
 
     public void beginCapture(){
-       recordValues.start();
+        converter.write(editText.getText().toString() + "\n");
+        converter.write(spinner.getSelectedItem().toString() + "\n");
+        recordValues.start();
     }
 
 
@@ -118,7 +123,7 @@ public class mainscreen extends AppCompatActivity {
                 gX.setText("X - " + gyro[0]);
                 gY.setText("Y - " + gyro[1]);
                 gZ.setText("Z - " + gyro[2]);
-            //handler.post(this); //Note - any and all Android thread-based loops that don't utilise recursive handler calls need to call android looper
+                //handler.post(this); //Note - any and all Android thread-based loops that don't utilise recursive handler calls need to call android looper
             //side note 2 - ideally we want to either use a handler looper or async task to do constant UI updates, but I'm pressed for time
         }
     };
@@ -133,9 +138,9 @@ public class mainscreen extends AppCompatActivity {
             gX.setText("X - " + gyro[0]);
             gY.setText("Y - " + gyro[1]);
             gZ.setText("Z - " + gyro[2]);
-            converter.write("" + accel[0] + "/n");
-            converter.write("" + accel[1] + "/n");
-            converter.write("" + accel[2] + "/n");
+            converter.write("" + accel[0] + "\n");
+            converter.write("" + accel[1] + "\n");
+            converter.write("" + accel[2] + "\n");
         }
 
         public void onFinish() {
