@@ -16,4 +16,5 @@
     <string name="badminton">Badminton</string>
     <string name="squash">Squash</string>
     <string name="tabletennis">Table Tennis</string>
+    <string name="idle">Standing</string>
 </resources>

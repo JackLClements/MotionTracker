@@ -26,6 +26,7 @@ public class mainscreen extends AppCompatActivity {
     private ImageButton settingsButton;
     private EditText editText;
     private Spinner spinner;
+    ArrayAdapter<CharSequence> adapter;
     //
     ARFFConverter converter;
     private boolean running;
@@ -52,8 +53,7 @@ public class mainscreen extends AppCompatActivity {
         populateSpinner(spinner);
         spinner.setOnItemSelectedListener(activitySpinnerListener);
         settingsButton = (ImageButton) findViewById(R.id.settings);
-        converter = new ARFFConverter(getApplicationContext());
-        //converter.write("Test phrase");
+        converter = new ARFFConverter(getApplicationContext(), 100); //hardcoded for now can divide later
         accel = new float[3];
         gyro = new float[3];
         running = false;
@@ -61,6 +61,7 @@ public class mainscreen extends AppCompatActivity {
         //data to send over the wire - needs to be attached to a listener really
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //SettingsBundle bundle = new SettingsBundle(prefs.getBoolean("accelOrGrav", false), prefs.getBoolean("gyroOrRotation", false));
+        converter.close();
     }
 
     @Override
@@ -77,7 +78,7 @@ public class mainscreen extends AppCompatActivity {
         Runnable spinnerPopulation = new Runnable(){
             @Override
             public void run(){
-                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getBaseContext(), R.array.activities, android.R.layout.simple_spinner_item);
+                adapter = ArrayAdapter.createFromResource(getBaseContext(), R.array.activities, android.R.layout.simple_spinner_item);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapter);
             }
@@ -104,8 +105,8 @@ public class mainscreen extends AppCompatActivity {
     };
 
     public void beginCapture(){
-        converter.write(editText.getText().toString() + "\n");
-        converter.write(spinner.getSelectedItem().toString() + "\n");
+        converter.open();
+        converter.write(editText.getText().toString() + ", ");
         recordValues.start();
     }
 
@@ -124,7 +125,7 @@ public class mainscreen extends AppCompatActivity {
                 gY.setText("Y - " + gyro[1]);
                 gZ.setText("Z - " + gyro[2]);
                 //handler.post(this); //Note - any and all Android thread-based loops that don't utilise recursive handler calls need to call android looper
-            //side note 2 - ideally we want to either use a handler looper or async task to do constant UI updates, but I'm pressed for time
+                //side note 2 - ideally we want to either use a handler looper or async task to do constant UI updates, but I'm pressed for time
         }
     };
 
@@ -138,14 +139,15 @@ public class mainscreen extends AppCompatActivity {
             gX.setText("X - " + gyro[0]);
             gY.setText("Y - " + gyro[1]);
             gZ.setText("Z - " + gyro[2]);
-            converter.write("" + accel[0] + "\n");
-            converter.write("" + accel[1] + "\n");
-            converter.write("" + accel[2] + "\n");
+            converter.write("" + accel[0] + ", ");
+            converter.write("" + accel[1] + ", ");
+            converter.write("" + accel[2] + ", ");
         }
 
         public void onFinish() {
             Toast toast = Toast.makeText(getApplicationContext(), "Countdown Finished!", Toast.LENGTH_SHORT);
             toast.show();
+            converter.write(spinner.getSelectedItem().toString() + "\n");
             converter.close();
         }
     };

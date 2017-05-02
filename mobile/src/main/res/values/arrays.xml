@@ -11,6 +11,7 @@
     </string-array>
 
     <string-array name="activities">
+        <item>@string/idle</item>
         <item>@string/running</item>
         <item>@string/walking</item>
         <item>@string/basketball</item>
