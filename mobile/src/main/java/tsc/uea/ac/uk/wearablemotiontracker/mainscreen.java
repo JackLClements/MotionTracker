@@ -107,6 +107,15 @@ public class mainscreen extends AppCompatActivity {
     public void beginCapture(){
         converter.open();
         converter.write(editText.getText().toString() + ", ");
+        accel = DataListener.getAccelData();
+        gyro = DataListener.getGyroData();
+        converter.write("" + accel[0] + ", ");
+        converter.write("" + accel[1] + ", ");
+        converter.write("" + accel[2] + ", ");
+        converter.write("" + gyro[0] + ", ");
+        converter.write("" + gyro[1] + ", ");
+        converter.write("" + gyro[2] + ", ");
+
         recordValues.start();
     }
 
@@ -142,11 +151,22 @@ public class mainscreen extends AppCompatActivity {
             converter.write("" + accel[0] + ", ");
             converter.write("" + accel[1] + ", ");
             converter.write("" + accel[2] + ", ");
+            converter.write("" + gyro[0] + ", ");
+            converter.write("" + gyro[1] + ", ");
+            converter.write("" + gyro[2] + ", ");
         }
 
         public void onFinish() {
             Toast toast = Toast.makeText(getApplicationContext(), "Countdown Finished!", Toast.LENGTH_SHORT);
             toast.show();
+            accel = DataListener.getAccelData();
+            gyro = DataListener.getGyroData();
+            converter.write("" + accel[0] + ", ");
+            converter.write("" + accel[1] + ", ");
+            converter.write("" + accel[2] + ", ");
+            converter.write("" + gyro[0] + ", ");
+            converter.write("" + gyro[1] + ", ");
+            converter.write("" + gyro[2] + ", ");
             converter.write(spinner.getSelectedItem().toString() + "\n");
             converter.close();
         }
