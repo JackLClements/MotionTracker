@@ -16,17 +16,23 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import tsc.uea.ac.uk.hardwareaccess.DataListener;
 
+/**
+ * Class representing the main screen of the application. Most program logic takes place here currently.
+ */
 public class mainscreen extends AppCompatActivity {
 
-    //private DataListener listener;
+    //private DataListener listener; //not used
     private TextView mTextView, mX, mY, mZ, gX, gY, gZ;
     private Handler handler;
     private ImageButton settingsButton;
     private EditText editText;
     private Spinner spinner;
     ArrayAdapter<CharSequence> adapter;
+    ArrayList<String> spinValues;
     //
     ARFFConverter converter;
     private boolean running;
@@ -35,6 +41,10 @@ public class mainscreen extends AppCompatActivity {
     private float [] accel;
     private float [] gyro;
 
+    /**
+     * Called by OS on app open, sets up UI elements, creates instances of classes
+     * @param savedInstanceState state of application in bundle format
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +64,7 @@ public class mainscreen extends AppCompatActivity {
         spinner.setOnItemSelectedListener(activitySpinnerListener);
         settingsButton = (ImageButton) findViewById(R.id.settings);
         converter = new ARFFConverter(getApplicationContext(), 100); //hardcoded for now can divide later
+        converter.close();
         accel = new float[3];
         gyro = new float[3];
         running = false;
@@ -64,16 +75,28 @@ public class mainscreen extends AppCompatActivity {
         converter.close();
     }
 
+    /**
+     * Called when the class resumes
+     */
     @Override
     protected void onResume(){
         super.onResume();
     }
 
+    /**
+     * Passes the intent to the settings fragment
+     * @param view
+     */
     public void settingsMenu(View view){
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Populates the spinner with values in the arrays.xml file.
+     * Run on a seperate thread via the handler.
+     * @param spinner
+     */
     public void populateSpinner(final Spinner spinner){
         Runnable spinnerPopulation = new Runnable(){
             @Override
@@ -86,13 +109,15 @@ public class mainscreen extends AppCompatActivity {
         handler.post(spinnerPopulation);
     }
 
-
+    /**
+     * Inner class in order to populate spinner and assign value to class variable
+     */
     private final AdapterView.OnItemSelectedListener activitySpinnerListener = new AdapterView.OnItemSelectedListener(){
         @Override
         public void onItemSelected(AdapterView parent, View view, int pos, long id) {
             String name = (String) parent.getItemAtPosition(pos);
             spinner.setSelection(pos);
-            Log.d("SELECTION - ", name);
+
             // An item was selected. You can retrieve the selected item using
             // parent.getItemAtPosition(pos)
         }
@@ -104,17 +129,21 @@ public class mainscreen extends AppCompatActivity {
         }
     };
 
+    /**
+     * Begins the capture operation. Opens the converter, writes the initial lines and starts the timer.
+     */
     public void beginCapture(){
         converter.open();
         converter.write(editText.getText().toString() + ", ");
         accel = DataListener.getAccelData();
         gyro = DataListener.getGyroData();
-        converter.write("" + accel[0] + ", ");
-        converter.write("" + accel[1] + ", ");
-        converter.write("" + accel[2] + ", ");
-        converter.write("" + gyro[0] + ", ");
-        converter.write("" + gyro[1] + ", ");
-        converter.write("" + gyro[2] + ", ");
+        converter.writeData(accel, gyro);
+        //converter.write("" + accel[0] + ", ");
+        //converter.write("" + accel[1] + ", ");
+        //converter.write("" + accel[2] + ", ");
+        //converter.write("" + gyro[0] + ", ");
+        //converter.write("" + gyro[1] + ", ");
+        //converter.write("" + gyro[2] + ", ");
 
         recordValues.start();
     }
@@ -138,7 +167,14 @@ public class mainscreen extends AppCompatActivity {
         }
     };
 
+    /**
+     * A timer implementation that counts down and writes values on every tick
+     */
     private CountDownTimer recordValues = new CountDownTimer(DURATION, INCREMENT){
+        /**
+         * For every tick, update the UI and write the data to the .arff file
+         * @param millisUntilFinished time in ms until the countdown is complete
+         */
         public void onTick(long millisUntilFinished) {
             accel = DataListener.getAccelData();
             gyro = DataListener.getGyroData();
@@ -148,25 +184,33 @@ public class mainscreen extends AppCompatActivity {
             gX.setText("X - " + gyro[0]);
             gY.setText("Y - " + gyro[1]);
             gZ.setText("Z - " + gyro[2]);
+            /*
             converter.write("" + accel[0] + ", ");
             converter.write("" + accel[1] + ", ");
             converter.write("" + accel[2] + ", ");
             converter.write("" + gyro[0] + ", ");
             converter.write("" + gyro[1] + ", ");
-            converter.write("" + gyro[2] + ", ");
+            converter.write("" + gyro[2] + ", ");*/
+            converter.writeData(accel, gyro);
         }
 
+        /**
+         * Called once the timer hits zero. Shows a message to the user and closes the writer.
+         */
         public void onFinish() {
             Toast toast = Toast.makeText(getApplicationContext(), "Countdown Finished!", Toast.LENGTH_SHORT);
             toast.show();
             accel = DataListener.getAccelData();
             gyro = DataListener.getGyroData();
+            /*
             converter.write("" + accel[0] + ", ");
             converter.write("" + accel[1] + ", ");
             converter.write("" + accel[2] + ", ");
             converter.write("" + gyro[0] + ", ");
             converter.write("" + gyro[1] + ", ");
-            converter.write("" + gyro[2] + ", ");
+            converter.write("" + gyro[2] + ", ");*/
+            converter.writeData(accel, gyro);
+            converter.processEntry();
             converter.write(spinner.getSelectedItem().toString() + "\n");
             converter.close();
         }

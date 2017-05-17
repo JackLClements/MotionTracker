@@ -17,6 +17,8 @@ import tsc.uea.ac.uk.wearablemotiontracker.mainscreen;
 
 /**
  * Created by Jack L. Clements on 08/04/2017.
+ * Listens on data layer for change in data.
+ * Running state set in build settings
  */
 
 public class DataListener extends WearableListenerService {
@@ -30,15 +32,23 @@ public class DataListener extends WearableListenerService {
     private static final String FILEPATH = "/watchValues";
     private static final String BEGIN = "/begin";
 
-
+    /**
+     * Default constructor
+     */
     public DataListener(){
     }
 
+    /**
+     * Initialises object and opens data layer
+     * @param context
+     */
     public DataListener(Context context){
         dataLayer = new DataLayer(context); //connects to data layer
     }
 
-
+    /**
+     * Called upon creation, initialises data layer
+     */
     @Override
     public void onCreate(){
         super.onCreate();
@@ -95,15 +105,26 @@ public class DataListener extends WearableListenerService {
 
     }
 
-
+    /**
+     * Returns accelorometer values
+     * @return returns accelorometer values
+     */
     public static float [] getAccelData(){
         return accelorometer;
     }
 
+    /**
+     * Returns gyroscope values
+     * @return gyroscope values
+     */
     public static float [] getGyroData(){
         return gyroscope;
     }
 
+    /**
+     * sets context listener is attached to
+     * @param screen reference to application's main screen
+     */
     public static void setActivity(mainscreen screen){
         activity = screen;
     }

@@ -23,6 +23,9 @@ import tsc.uea.ac.uk.shared.DataLayer;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * Main activity class for the wear component.
+ */
 public class watchfaceact extends Activity {
 
     private TextView mTextView;
@@ -34,6 +37,9 @@ public class watchfaceact extends Activity {
     private DataLayer dataLayer;
     private ImageButton imageButton;
 
+    /**
+     * Thread designed to update the sensor values from the @see tsc.uea.ac.uk.hardwareAccess.WatchHardware instance.
+     */
     private Runnable updateValuesThread = new Runnable(){
         @Override
         public void run(){
@@ -45,7 +51,7 @@ public class watchfaceact extends Activity {
             mY.setText("Y - " + aValues[1]);
             mZ.setText("Z - " + aValues[2]);
             dataLayer.send(aValues, gValues);
-            handler.post(this); //calling this inside run essentially ensures run() will run again
+            handler.postDelayed(this, 100); //calling this inside run essentially ensures run() will run again
                                             //there has to be a better way of looping this, surely?
         }
     };
@@ -60,6 +66,11 @@ public class watchfaceact extends Activity {
     //new thread entirely, attatch thread to process, may leave flow control to be a tad wacky
 
     //watchviewstub deprecated in 23+, use version check to create obj stub
+
+    /**
+     * Initialise values and set up sensors.
+     * @param savedInstanceState state of application in bundle format
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Log.d("CREATION", "Created!");
@@ -90,6 +101,10 @@ public class watchfaceact extends Activity {
         handler.post(updateValuesThread);
     }
 
+    /**
+     * Vibrate in order to alert user of capture, then begin to transmit data.
+     * @param view
+     */
     public void startCapture(View view){
         Runnable startCapture = new Runnable() {
             @Override
@@ -112,6 +127,9 @@ public class watchfaceact extends Activity {
 
     }
 
+    /**
+     * Unregister listener objects to conserve performance
+     */
     @Override
     public void onPause(){
         super.onPause();
@@ -119,6 +137,9 @@ public class watchfaceact extends Activity {
         handler.removeCallbacks(updateValuesThread);
     }
 
+    /**
+     * Reregister listener to resume
+     */
     @Override
     public void onResume(){
         super.onResume();

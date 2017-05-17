@@ -7,10 +7,16 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 /**
+ * Class
  * Created by Jack L. Clements on 17/04/2017.
  */
 
 public class SettingsActivity extends AppCompatActivity {
+
+    /**
+     * Initialises application from settings bundle
+     * @param savedStateInstance state of application in bundle format
+     */
     @Override
     public void onCreate(Bundle savedStateInstance){
         super.onCreate(savedStateInstance);

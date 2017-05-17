@@ -30,7 +30,7 @@ public class WatchHardware {
     private float [] accelValues;
     private float [] gyroValues;
 
-    /**
+    /*
      * Anonymous inner class implementation of EventListener interface.
      * Interestingly (will remove before I show this to anyone lol), this anonymous etc. from
      * the interface is required for all listeners. I'm unaware of any default listener behavior.
@@ -55,7 +55,14 @@ public class WatchHardware {
      * rotation is a constant set of position vectors
      *
      */
+    /**
+     * Event listener that waits until the sensor values have changed before updating the surrounding class data structures.
+     */
     private final SensorEventListener MotionListener = new SensorEventListener() {
+        /**
+         * Defines behavior on sensor value changed. Updates values.
+         * @param event event indicating sensor change
+         */
         @Override
         public void onSensorChanged(SensorEvent event) {
             //if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){ //just a test...
@@ -73,6 +80,11 @@ public class WatchHardware {
             }
         }
 
+        /**
+         * Defines behavior when accuracy is changed. Not currently needed, used as dummy method.
+         * @param sensor sensor on which changes occur
+         * @param accuracy accuracy change value
+         */
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
             //on accuracy changed
@@ -97,11 +109,18 @@ public class WatchHardware {
         gyroValues = new float[3];
     }
 
-
+    /**
+     * Getter for acceleration values
+     * @return acceleration values
+     */
     public float [] getAccelValues(){
         return accelValues;
     }
 
+    /**
+     * Getter for gyroscope values
+     * @return gyroscope values
+     */
     public float [] getGyroValues(){
         return gyroValues;
     }
@@ -114,12 +133,20 @@ public class WatchHardware {
         wSensorManager.registerListener(MotionListener, wGyroscope, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
+    /**
+     * Unregisters listener to track values. Should be called when application is out of scope.
+     */
     public void unregisterListener(){
         wSensorManager.unregisterListener(MotionListener, wAccelorometer);
         wSensorManager.unregisterListener(MotionListener, wGyroscope);
     }
 
-
+    /**
+     * Modified low-pass filter. Implementation is discussed more in-depth in paper, but is designed to remove sensor noise.
+     * @param input raw data
+     * @param output location to store new data/data from last pass
+     * @return output
+     */
     public float[] lowPass(float [] input, float [] output){
         for(int i = 0; i < input.length; i++){
             output[i] = output[i] + 0.25f * (input[i] - output[i]); //0.5 represents an alpha value, this needs calculating properly in future

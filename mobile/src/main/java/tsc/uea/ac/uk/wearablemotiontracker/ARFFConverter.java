@@ -9,6 +9,7 @@ import android.widget.Toast;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.File;
+import java.util.ArrayList;
 
 import static android.content.Context.MODE_APPEND;
 import static android.os.Environment.DIRECTORY_DOCUMENTS;
@@ -22,19 +23,31 @@ import static android.os.Environment.DIRECTORY_DOCUMENTS;
 public class ARFFConverter {
     private File saveDir;
     private PrintWriter writer;
-    private File file, fileX, fileY, fileZ;
+    private File file;
     private String id;
     private int samples;
 
     //test
     FileOutputStream outputStream;
 
+    //output
+    ArrayList<String> accelX, accelY, accelZ, gyroX, gyroY, gyroZ;
 
+    /**
+     * Constructor with context. Deprecated.
+     * @param context
+     */
     public ARFFConverter(Context context) {
         if(isExternalStorageWritable()){
             //id = "Test1";
             saveDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Test Directory");
-            file = new File(saveDir, "TestFile.txt");
+            file = new File(saveDir, "MVMotion.arff");
+            accelX = new ArrayList<>();
+            accelY = new ArrayList<>();
+            accelZ = new ArrayList<>();
+            gyroX = new ArrayList<>();
+            gyroY = new ArrayList<>();
+            gyroZ = new ArrayList<>();
             /*
             fileX = new File(saveDir, "TestX.txt");
             fileY = new File(saveDir, "TestY.txt");
@@ -58,16 +71,27 @@ public class ARFFConverter {
         }
     }
 
+    /**
+     * Constructor that sets no. of samples
+     * @param context context to create file, and check directories
+     * @param noOfSamples no of samples per dimension
+     */
     public ARFFConverter(Context context, int noOfSamples) {
         samples = noOfSamples;
         if(isExternalStorageWritable()){
             //id = "Test1";
             saveDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Test Directory");
-            file = new File(saveDir, "MVMotion.txt");
+            file = new File(saveDir, "MVMotion.arff");
             /*
             fileX = new File(saveDir, "TestX.txt");
             fileY = new File(saveDir, "TestY.txt");
             fileZ = new File(saveDir, "TestZ.txt");*/
+            accelX = new ArrayList<>();
+            accelY = new ArrayList<>();
+            accelZ = new ArrayList<>();
+            gyroX = new ArrayList<>();
+            gyroY = new ArrayList<>();
+            gyroZ = new ArrayList<>();
             if(!saveDir.mkdirs()){
                 Log.e("Error", "Dir. not created");
             }
@@ -79,14 +103,20 @@ public class ARFFConverter {
                     writer.write("@relation MVMotion \n");
                     writer.write("@attribute id string \n");
                     writer.write("@attribute series relational \n");
-                    for(int i = 1; i <= noOfSamples; i++){
-                        writer.write("@attribute accelX" + i + " real \n");
-                        writer.write("@attribute accelY" + i + " real \n");
-                        writer.write("@attribute accelZ" + i + " real \n");
-                        writer.write("@attribute gyroX" + i + " real \n");
-                        writer.write("@attribute gyroY" + i + " real \n");
-                        writer.write("@attribute gyroZ" + i + " real \n");
+                    for(int i = 0; i < noOfSamples; i++){
+                        writer.write("@attribute a" + i + " real \n");
                     }
+                    writer.write("@end series \n");
+                    String [] activities = context.getResources().getStringArray(R.array.activities);
+                    write("@attribute activity {");
+                    for(int i = 0; i < activities.length; i++){
+                        Log.d("N - ", activities[i]);
+                        write(activities[i]);
+                        if(i < activities.length - 1){
+                            write(", ");
+                        }
+                    }
+                    write("} \n @data");
                     /*
                     writer.write("@attribute activity {");
                     for(int i = 0; i < adapter.getCount(); i++){
@@ -108,11 +138,14 @@ public class ARFFConverter {
         }
     }
 
+    /**
+     * Re-opens file to add subsequent entries. If file has been deleted, it is remade.
+     */
     public void open(){
         if(isExternalStorageWritable()){
             //id = "Test1";
             saveDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Test Directory");
-            file = new File(saveDir, "MVMotion.txt");
+            file = new File(saveDir, "MVMotion.arff");
             /*
             fileX = new File(saveDir, "TestX.txt");
             fileY = new File(saveDir, "TestY.txt");
@@ -128,13 +161,8 @@ public class ARFFConverter {
                     writer.write("@relation MVMotion \n");
                     writer.write("@attribute id string \n");
                     writer.write("@attribute series relational \n");
-                    for(int i = 1; i <= samples; i++){
-                        writer.write("@attribute accelX" + i + " real \n");
-                        writer.write("@attribute accelY" + i + " real \n");
-                        writer.write("@attribute accelZ" + i + " real \n");
-                        writer.write("@attribute gyroX" + i + " real \n");
-                        writer.write("@attribute gyroY" + i + " real \n");
-                        writer.write("@attribute gyroZ" + i + " real \n");
+                    for(int i = 0; i < samples; i++){
+                        writer.write("@attribute a" + i + " real \n");
                     }
                     /*
                     writer.write("@attribute activity {");
@@ -153,10 +181,95 @@ public class ARFFConverter {
         }
     }
 
+    /**
+     * Writes string to the file directly.
+     * @param s string to be written
+     */
     public void write(String s){
         writer.write(s);
     }
 
+    /**
+     * Adds data to temporary arrays so that they can be formatted upon conclusion of the entry
+     * @param accel acceleration
+     * @param gyro gyroscope
+     */
+    public void writeData(float [] accel, float [] gyro){
+        accelX.add("" + accel[0]);
+        accelY.add("" + accel[1]);
+        accelZ.add("" + accel[2]);
+        gyroX.add("" + gyro[0]);
+        gyroY.add("" + gyro[1]);
+        gyroZ.add("" + gyro[2]);
+    }
+
+    /**
+     * Processes the collected data into the multivariate format.
+     */
+    public void processEntry(){
+        write("\"");
+        /*
+        for(int i = 0; i < samples; i++){
+            write(accelX.get(i) + ", ");
+        }
+        write("\\n ");
+        for(int i = 0; i < samples; i++){
+            write(accelY.get(i) + ", ");
+        }
+        write("\\n ");
+        for(int i = 0; i < samples; i++){
+            write(accelZ.get(i) + ", ");
+        }
+        write("\\n ");
+        for(int i = 0; i < samples; i++){
+            write(gyroX.get(i) + ", ");
+        }
+        write("\\n ");
+        for(int i = 0; i < samples; i++){
+            write(gyroY.get(i) + ", ");
+        }
+        write("\\n ");
+        for(int i = 0; i < samples; i++){
+            write(gyroZ.get(i) + ", ");
+        }
+        write("\"");*/
+        processDimension(accelX);
+        write("\\n ");
+        processDimension(accelY);
+        write("\\n ");
+        processDimension(accelZ);
+        write("\\n ");
+        processDimension(gyroX);
+        write("\\n ");
+        processDimension(gyroY);
+        write("\\n ");
+        processDimension(gyroZ);
+        write("\", ");
+        accelX.clear();
+        accelY.clear();
+        accelZ.clear();
+        gyroX.clear();
+        gyroY.clear();
+        gyroZ.clear();
+    }
+
+    /**
+     * Adds a formatted dimension to the entry in a file
+     * @param dimension dimension to be added
+     */
+    public void processDimension(ArrayList<String> dimension){
+        while(!dimension.isEmpty()){
+            String value = dimension.remove(0);
+            write(value);
+            if(!dimension.isEmpty()){
+                write(", ");
+            }
+        }
+    }
+
+    /**
+     * Closes file once entry has been written, flushes streams to conserve memory.
+     */
     public void close(){
         try{
             writer.flush();
@@ -166,11 +279,13 @@ public class ARFFConverter {
         catch(Exception e){
             e.printStackTrace();
         }
-
     }
 
 
-    /* Checks if external storage is available for read and write */
+    /**
+     * Checks if external storage is available for read and write
+     * @return true if available, otherwise false
+     */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -179,7 +294,10 @@ public class ARFFConverter {
         return false;
     }
 
-    /* Checks if external storage is available to at least read */
+    /**
+     * Checks if external storage is available for read and write
+     * @return true if available, otherwise false
+     */
     public boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state) ||

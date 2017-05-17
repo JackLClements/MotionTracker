@@ -29,10 +29,17 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * DataLayer class, used to access the data layer to send data between devices
+ */
 public class DataLayer implements Runnable {
     private static GoogleApiClient client;
     private static final String MOTION_CAPTURE_CAPABILITY = "motion_capture";
 
+    /**
+     * Constructor for DataLayer. Initialising an instance of GoogleAPIClient requires a call to a builder class.
+     * @param context application context
+     */
     public DataLayer(Context context){
         final Toast toast = Toast.makeText(context, "Connected to client", Toast.LENGTH_SHORT);
         client = new GoogleApiClient.Builder(context).addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -54,7 +61,11 @@ public class DataLayer implements Runnable {
         client.connect();
     }
 
-
+    /**
+     * Sends motion sensor data across the data layer
+     * @param accel accelorometer data
+     * @param gyro gyroscopic data
+     */
     public void send(float [] accel, float[] gyro){
         final float [] payloadCopy = accel;
         final float [] payLoadCopy2 = gyro;
@@ -73,6 +84,9 @@ public class DataLayer implements Runnable {
         }).start(); //done in its own thread to avoid program blocking
     }
 
+    /**
+     * Sends a "begin" message to an attached node in order to begin capture
+     */
     public void sendBegin(){
         //if node id is not null
         new Thread(new Runnable() {
@@ -107,14 +121,19 @@ public class DataLayer implements Runnable {
     }
 
     /**
-     * You can add listener, but for now we won't
-     * @return
+     * Returns a CapabilityInfo object consisting of connected nodes
+     * @return a list of nodes with the listed capabilities
      */
     public CapabilityInfo getNodes(){
         CapabilityApi.GetCapabilityResult result = Wearable.CapabilityApi.getCapability(client, MOTION_CAPTURE_CAPABILITY, CapabilityApi.FILTER_REACHABLE).await();
         return result.getCapability();
     }
 
+    /**
+     * Chooses the most suitable node from a set of connected nodes
+     * @param nodes set of nodes
+     * @return ID of closest node
+     */
     public String pickBestNode(Set<Node> nodes){
         String bestNode = null;
         for(Node node : nodes){
@@ -127,6 +146,11 @@ public class DataLayer implements Runnable {
     }
 
     //settings must be persisted individually, fetch, add to bundle-wrapper then send/decode
+
+    /**
+     * Method stub with thread containing the application preferences
+     * @param preferences application preferences
+     */
     public void sendPreferences(final SharedPreferences preferences){
         new Thread(new Runnable() {
             @Override
